@@ -1,0 +1,392 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="TestContactarModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ESTADOPRESTAMO">
+          <Key>
+            <PropertyRef Name="CODIGO" />
+          </Key>
+          <Property Name="CODIGO" Type="nvarchar" MaxLength="1" Nullable="false" />
+          <Property Name="NOMBRE" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'TestContactar.dbo.PAGO' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="PAGO">
+          <Key>
+            <PropertyRef Name="SECUENCIAL" />
+            <PropertyRef Name="SECUENCIALPRESTAMO" />
+            <PropertyRef Name="VALORPAGO" />
+            <PropertyRef Name="FECHA" />
+            <PropertyRef Name="SALDOPRESTAMO" />
+          </Key>
+          <Property Name="SECUENCIAL" Type="int" Nullable="false" />
+          <Property Name="SECUENCIALPRESTAMO" Type="int" Nullable="false" />
+          <Property Name="VALORPAGO" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="FECHA" Type="datetime" Nullable="false" />
+          <Property Name="SALDOPRESTAMO" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PERSONA">
+          <Key>
+            <PropertyRef Name="SECUENCIAL" />
+          </Key>
+          <Property Name="SECUENCIAL" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TIPOIDENTIFICACION" Type="nvarchar" MaxLength="3" Nullable="false" />
+          <Property Name="IDENTIFICACION" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PRIMERNOMBRE" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SEGUNDONOMBRE" Type="nvarchar" MaxLength="50" />
+          <Property Name="PRIMERAPELLIDO" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SEGUNDOAPELLIDO" Type="nvarchar" MaxLength="50" />
+          <Property Name="ESTAACTIVO" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PRESTAMO">
+          <Key>
+            <PropertyRef Name="SECUENCIAL" />
+          </Key>
+          <Property Name="SECUENCIAL" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SECUENCIALPERSONA" Type="int" Nullable="false" />
+          <Property Name="MONTO" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="ESTADO" Type="nvarchar" MaxLength="1" Nullable="false" />
+          <Property Name="SALDO" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="TIPOIDENTIFICACION">
+          <Key>
+            <PropertyRef Name="CODIGO" />
+          </Key>
+          <Property Name="CODIGO" Type="nvarchar" MaxLength="3" Nullable="false" />
+          <Property Name="NOMBRE" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="ESTAACTIVO" Type="bit" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_PAGO_PRESTAMO">
+          <End Role="PRESTAMO" Type="Self.PRESTAMO" Multiplicity="1" />
+          <End Role="PAGO" Type="Self.PAGO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRESTAMO">
+              <PropertyRef Name="SECUENCIAL" />
+            </Principal>
+            <Dependent Role="PAGO">
+              <PropertyRef Name="SECUENCIALPRESTAMO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PERSONA_TIPOIDENTIFICACION">
+          <End Role="TIPOIDENTIFICACION" Type="Self.TIPOIDENTIFICACION" Multiplicity="1" />
+          <End Role="PERSONA" Type="Self.PERSONA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TIPOIDENTIFICACION">
+              <PropertyRef Name="CODIGO" />
+            </Principal>
+            <Dependent Role="PERSONA">
+              <PropertyRef Name="TIPOIDENTIFICACION" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PRESTAMO_ESTADOPRESTAMO">
+          <End Role="ESTADOPRESTAMO" Type="Self.ESTADOPRESTAMO" Multiplicity="1" />
+          <End Role="PRESTAMO" Type="Self.PRESTAMO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADOPRESTAMO">
+              <PropertyRef Name="CODIGO" />
+            </Principal>
+            <Dependent Role="PRESTAMO">
+              <PropertyRef Name="ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PRESTAMO_PERSONA">
+          <End Role="PERSONA" Type="Self.PERSONA" Multiplicity="1" />
+          <End Role="PRESTAMO" Type="Self.PRESTAMO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PERSONA">
+              <PropertyRef Name="SECUENCIAL" />
+            </Principal>
+            <Dependent Role="PRESTAMO">
+              <PropertyRef Name="SECUENCIALPERSONA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TestContactarModelStoreContainer">
+          <EntitySet Name="ESTADOPRESTAMO" EntityType="Self.ESTADOPRESTAMO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PERSONA" EntityType="Self.PERSONA" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PRESTAMO" EntityType="Self.PRESTAMO" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TIPOIDENTIFICACION" EntityType="Self.TIPOIDENTIFICACION" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PAGO" EntityType="Self.PAGO" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [PAGO].[SECUENCIAL] AS [SECUENCIAL], 
+    [PAGO].[SECUENCIALPRESTAMO] AS [SECUENCIALPRESTAMO], 
+    [PAGO].[VALORPAGO] AS [VALORPAGO], 
+    [PAGO].[FECHA] AS [FECHA], 
+    [PAGO].[SALDOPRESTAMO] AS [SALDOPRESTAMO]
+    FROM [dbo].[PAGO] AS [PAGO]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_PAGO_PRESTAMO" Association="Self.FK_PAGO_PRESTAMO">
+            <End Role="PRESTAMO" EntitySet="PRESTAMO" />
+            <End Role="PAGO" EntitySet="PAGO" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PERSONA_TIPOIDENTIFICACION" Association="Self.FK_PERSONA_TIPOIDENTIFICACION">
+            <End Role="TIPOIDENTIFICACION" EntitySet="TIPOIDENTIFICACION" />
+            <End Role="PERSONA" EntitySet="PERSONA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PRESTAMO_ESTADOPRESTAMO" Association="Self.FK_PRESTAMO_ESTADOPRESTAMO">
+            <End Role="ESTADOPRESTAMO" EntitySet="ESTADOPRESTAMO" />
+            <End Role="PRESTAMO" EntitySet="PRESTAMO" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PRESTAMO_PERSONA" Association="Self.FK_PRESTAMO_PERSONA">
+            <End Role="PERSONA" EntitySet="PERSONA" />
+            <End Role="PRESTAMO" EntitySet="PRESTAMO" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="TestContactarModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ESTADOPRESTAMO">
+          <Key>
+            <PropertyRef Name="CODIGO" />
+          </Key>
+          <Property Name="CODIGO" Type="String" MaxLength="1" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NOMBRE" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="PRESTAMO" Relationship="Self.FK_PRESTAMO_ESTADOPRESTAMO" FromRole="ESTADOPRESTAMO" ToRole="PRESTAMO" />
+        </EntityType>
+        <EntityType Name="PERSONA">
+          <Key>
+            <PropertyRef Name="SECUENCIAL" />
+          </Key>
+          <Property Name="SECUENCIAL" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TIPOIDENTIFICACION" Type="String" MaxLength="3" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IDENTIFICACION" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PRIMERNOMBRE" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SEGUNDONOMBRE" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PRIMERAPELLIDO" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SEGUNDOAPELLIDO" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ESTAACTIVO" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="TIPOIDENTIFICACION1" Relationship="Self.FK_PERSONA_TIPOIDENTIFICACION" FromRole="PERSONA" ToRole="TIPOIDENTIFICACION" />
+          <NavigationProperty Name="PRESTAMO" Relationship="Self.FK_PRESTAMO_PERSONA" FromRole="PERSONA" ToRole="PRESTAMO" />
+        </EntityType>
+        <EntityType Name="PRESTAMO">
+          <Key>
+            <PropertyRef Name="SECUENCIAL" />
+          </Key>
+          <Property Name="SECUENCIAL" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SECUENCIALPERSONA" Type="Int32" Nullable="false" />
+          <Property Name="MONTO" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="ESTADO" Type="String" MaxLength="1" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SALDO" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <NavigationProperty Name="ESTADOPRESTAMO" Relationship="Self.FK_PRESTAMO_ESTADOPRESTAMO" FromRole="PRESTAMO" ToRole="ESTADOPRESTAMO" />
+          <NavigationProperty Name="PERSONA" Relationship="Self.FK_PRESTAMO_PERSONA" FromRole="PRESTAMO" ToRole="PERSONA" />
+          <NavigationProperty Name="PAGO" Relationship="Self.FK_PAGO_PRESTAMO" FromRole="PRESTAMO" ToRole="PAGO" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="TIPOIDENTIFICACION">
+          <Key>
+            <PropertyRef Name="CODIGO" />
+          </Key>
+          <Property Name="CODIGO" Type="String" MaxLength="3" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NOMBRE" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ESTAACTIVO" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="PERSONA" Relationship="Self.FK_PERSONA_TIPOIDENTIFICACION" FromRole="TIPOIDENTIFICACION" ToRole="PERSONA" />
+        </EntityType>
+        <EntityType Name="PAGO">
+          <Key>
+            <PropertyRef Name="SECUENCIAL" />
+            <PropertyRef Name="SECUENCIALPRESTAMO" />
+            <PropertyRef Name="VALORPAGO" />
+            <PropertyRef Name="FECHA" />
+            <PropertyRef Name="SALDOPRESTAMO" />
+          </Key>
+          <Property Name="SECUENCIAL" Type="Int32" Nullable="false" />
+          <Property Name="SECUENCIALPRESTAMO" Type="Int32" Nullable="false" />
+          <Property Name="VALORPAGO" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="FECHA" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="SALDOPRESTAMO" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <NavigationProperty Name="PRESTAMO" Relationship="Self.FK_PAGO_PRESTAMO" FromRole="PAGO" ToRole="PRESTAMO" />
+        </EntityType>
+        <Association Name="FK_PRESTAMO_ESTADOPRESTAMO">
+          <End Role="ESTADOPRESTAMO" Type="Self.ESTADOPRESTAMO" Multiplicity="1" />
+          <End Role="PRESTAMO" Type="Self.PRESTAMO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ESTADOPRESTAMO">
+              <PropertyRef Name="CODIGO" />
+            </Principal>
+            <Dependent Role="PRESTAMO">
+              <PropertyRef Name="ESTADO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PERSONA_TIPOIDENTIFICACION">
+          <End Role="TIPOIDENTIFICACION" Type="Self.TIPOIDENTIFICACION" Multiplicity="1" />
+          <End Role="PERSONA" Type="Self.PERSONA" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TIPOIDENTIFICACION">
+              <PropertyRef Name="CODIGO" />
+            </Principal>
+            <Dependent Role="PERSONA">
+              <PropertyRef Name="TIPOIDENTIFICACION" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PRESTAMO_PERSONA">
+          <End Role="PERSONA" Type="Self.PERSONA" Multiplicity="1" />
+          <End Role="PRESTAMO" Type="Self.PRESTAMO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PERSONA">
+              <PropertyRef Name="SECUENCIAL" />
+            </Principal>
+            <Dependent Role="PRESTAMO">
+              <PropertyRef Name="SECUENCIALPERSONA" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PAGO_PRESTAMO">
+          <End Role="PRESTAMO" Type="Self.PRESTAMO" Multiplicity="1" />
+          <End Role="PAGO" Type="Self.PAGO" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PRESTAMO">
+              <PropertyRef Name="SECUENCIAL" />
+            </Principal>
+            <Dependent Role="PAGO">
+              <PropertyRef Name="SECUENCIALPRESTAMO" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="TestContactarEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ESTADOPRESTAMO" EntityType="Self.ESTADOPRESTAMO" />
+          <EntitySet Name="PERSONA" EntityType="Self.PERSONA" />
+          <EntitySet Name="PRESTAMO" EntityType="Self.PRESTAMO" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+          <EntitySet Name="TIPOIDENTIFICACION" EntityType="Self.TIPOIDENTIFICACION" />
+          <EntitySet Name="PAGO" EntityType="Self.PAGO" />
+          <AssociationSet Name="FK_PRESTAMO_ESTADOPRESTAMO" Association="Self.FK_PRESTAMO_ESTADOPRESTAMO">
+            <End Role="ESTADOPRESTAMO" EntitySet="ESTADOPRESTAMO" />
+            <End Role="PRESTAMO" EntitySet="PRESTAMO" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PERSONA_TIPOIDENTIFICACION" Association="Self.FK_PERSONA_TIPOIDENTIFICACION">
+            <End Role="TIPOIDENTIFICACION" EntitySet="TIPOIDENTIFICACION" />
+            <End Role="PERSONA" EntitySet="PERSONA" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PRESTAMO_PERSONA" Association="Self.FK_PRESTAMO_PERSONA">
+            <End Role="PERSONA" EntitySet="PERSONA" />
+            <End Role="PRESTAMO" EntitySet="PRESTAMO" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PAGO_PRESTAMO" Association="Self.FK_PAGO_PRESTAMO">
+            <End Role="PRESTAMO" EntitySet="PRESTAMO" />
+            <End Role="PAGO" EntitySet="PAGO" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="TestContactarModelStoreContainer" CdmEntityContainer="TestContactarEntities">
+          <EntitySetMapping Name="ESTADOPRESTAMO">
+            <EntityTypeMapping TypeName="TestContactarModel.ESTADOPRESTAMO">
+              <MappingFragment StoreEntitySet="ESTADOPRESTAMO">
+                <ScalarProperty Name="CODIGO" ColumnName="CODIGO" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PERSONA">
+            <EntityTypeMapping TypeName="TestContactarModel.PERSONA">
+              <MappingFragment StoreEntitySet="PERSONA">
+                <ScalarProperty Name="SECUENCIAL" ColumnName="SECUENCIAL" />
+                <ScalarProperty Name="TIPOIDENTIFICACION" ColumnName="TIPOIDENTIFICACION" />
+                <ScalarProperty Name="IDENTIFICACION" ColumnName="IDENTIFICACION" />
+                <ScalarProperty Name="PRIMERNOMBRE" ColumnName="PRIMERNOMBRE" />
+                <ScalarProperty Name="SEGUNDONOMBRE" ColumnName="SEGUNDONOMBRE" />
+                <ScalarProperty Name="PRIMERAPELLIDO" ColumnName="PRIMERAPELLIDO" />
+                <ScalarProperty Name="SEGUNDOAPELLIDO" ColumnName="SEGUNDOAPELLIDO" />
+                <ScalarProperty Name="ESTAACTIVO" ColumnName="ESTAACTIVO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PRESTAMO">
+            <EntityTypeMapping TypeName="TestContactarModel.PRESTAMO">
+              <MappingFragment StoreEntitySet="PRESTAMO">
+                <ScalarProperty Name="SECUENCIAL" ColumnName="SECUENCIAL" />
+                <ScalarProperty Name="SECUENCIALPERSONA" ColumnName="SECUENCIALPERSONA" />
+                <ScalarProperty Name="MONTO" ColumnName="MONTO" />
+                <ScalarProperty Name="ESTADO" ColumnName="ESTADO" />
+                <ScalarProperty Name="SALDO" ColumnName="SALDO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="TestContactarModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TIPOIDENTIFICACION">
+            <EntityTypeMapping TypeName="TestContactarModel.TIPOIDENTIFICACION">
+              <MappingFragment StoreEntitySet="TIPOIDENTIFICACION">
+                <ScalarProperty Name="CODIGO" ColumnName="CODIGO" />
+                <ScalarProperty Name="NOMBRE" ColumnName="NOMBRE" />
+                <ScalarProperty Name="ESTAACTIVO" ColumnName="ESTAACTIVO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PAGO">
+            <EntityTypeMapping TypeName="TestContactarModel.PAGO">
+              <MappingFragment StoreEntitySet="PAGO">
+                <ScalarProperty Name="SECUENCIAL" ColumnName="SECUENCIAL" />
+                <ScalarProperty Name="SECUENCIALPRESTAMO" ColumnName="SECUENCIALPRESTAMO" />
+                <ScalarProperty Name="VALORPAGO" ColumnName="VALORPAGO" />
+                <ScalarProperty Name="FECHA" ColumnName="FECHA" />
+                <ScalarProperty Name="SALDOPRESTAMO" ColumnName="SALDOPRESTAMO" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
